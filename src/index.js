@@ -8,10 +8,12 @@ const countryInfo = document.querySelector('.country-info');
 
 inputEl.addEventListener('input', onInputEl);
 function onInputEl() {
-  const countryInput = inputEl.value;
+  const countryInput = inputEl.value.trim();
   // console.log(countryInput);
   fetchCountry(countryInput).then(showProfile);
-  // if (countryInput === name.common) { }
+  if (countryInput === '') {
+    console.log('очистить данные');
+  }
 }
 
 function fetchCountry(countryInput) {
@@ -24,9 +26,13 @@ function fetchCountry(countryInput) {
 }
 
 function showProfile(countries) {
+  if (countries.length === 1) {
+    chooseMarkup(countries[0]);
+    console.log(countries);
+  }
   const markup = countries.map(country => {
-    chooseMarkup(country);
-    countryInfo.innerHTML = `<div><img src="${flags.svg}" alt="flag${name.common}" height="30"/><span>${name.common}</span></div>`;
+    console.log(country);
+    countryInfo.innerHTML = `<div><img src="${country.flags.svg}" alt="flag${country.name.common}" height="30"/><span>${country.name.common}</span></div>`;
   });
 
   function chooseMarkup({ name, capital, flags, population, languages }) {
