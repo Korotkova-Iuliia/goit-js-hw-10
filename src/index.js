@@ -8,6 +8,24 @@ const inputEl = document.querySelector('#search-box');
 const countryList = document.querySelector('.country-list');
 const countryInfo = document.querySelector('.country-info');
 
+inputEl.addEventListener('input', debounce(onInputEl, DEBOUNCE_DELAY));
+
+function infoReset() {
+  countryInfo.innerHTML = '';
+}
+function ListReset() {
+  countryList.innerHTML = '';
+}
+function notifyFailure() {
+  Notify.failure('Oops, there is no country with that name', {
+    showOnlyTheLastOne: true,
+  });
+}
+function notifyInfo() {
+  Notify.info('Too many matches found. Please enter a more specific name.', {
+    showOnlyTheLastOne: true,
+  });
+}
 function fetchCountry(countryInput) {
   return fetch(
     `${BASE_URL}/name/${countryInput}?fields=name,capital,population,flags,languages`,
@@ -15,42 +33,37 @@ function fetchCountry(countryInput) {
     if (response.ok) {
       return response.json();
     }
-    Notify.failure('Oops, there is no country with that name');
+    if (countryInput !== '') {
+      notifyFailure();
+    }
+
     throw Error(response.statusText);
   });
 }
 
-inputEl.addEventListener('input', debounce(onInputEl, DEBOUNCE_DELAY));
 function onInputEl() {
-  countryInfo.innerHTML = '';
+  infoReset();
   const countryInput = inputEl.value.trim();
-
-  fetchCountry(countryInput).then(showProfile);
-
-  console.log(countryInput);
-
   if (countryInput === '') {
-    console.log('очистить данные');
-    countryInfo.innerHTML = '';
-    countryList.innerHTML = '';
+    infoReset();
+    ListReset();
   }
+  fetchCountry(countryInput).then(showCountry);
 }
 
-function showProfile(countries) {
-  console.log(countries);
-
+function showCountry(countries) {
+  ListReset();
+  renderCountriesInfo(countries);
   if (countries.length === 1) {
-    return chooseMarkup(countries[0]);
+    infoReset();
+    return renderCountriesList(countries[0]);
   }
   if (countries.length > 10) {
-    return Notify.info('Too many matches found. Please enter a more specific name.', {
-      showOnlyTheLastOne: true,
-    });
+    return notifyInfo();
   }
-  renderCountries(countries);
 }
 
-function renderCountries(countries) {
+function renderCountriesInfo(countries) {
   countryInfo.insertAdjacentHTML(
     'beforeend',
     countries
@@ -61,48 +74,11 @@ function renderCountries(countries) {
   );
 }
 
-function chooseMarkup({ name, capital, flags, population, languages }) {
-  countryList.innerHTML = `<li class="country-item">${name.official}</li>
-            <li class=""><img src="${flags.svg}" alt="yoast seo" height="30"/></li>
-            <li class="country-item">${capital}</li>
-            <li class="country-item">${population}</li>
-            <li class="country-item">${languages}</li>`;
+function renderCountriesList({ name, capital, flags, population, languages }) {
+  countryList.innerHTML = ` 
+  <img src="${flags.svg}" alt="yoast seo" height="30"/>
+  <h1 class="country-item">${name.official}</h1>
+  <p class="country-item">${capital}</p>
+  <p class="country-item">${population}</p>
+  <p class="country-item">${languages}</p>`;
 }
-// }
-// chooseMarkup(countries);
-// function renderCountries({ flags, name }) {
-//   countryInfo.innerHTML = `<div><img src="${flags.svg}" alt="flag${name.common}" height="30"/><span>${name.common}</span></div>`;
-// }
-// const markup = countries.map(country => {
-//   console.log(country);
-//   countryInfo.innerHTML = `<div><img src="${country.flags.svg}" alt="flag${country.name.common}" height="30"/><span>${country.name.common}</span></div>`;
-// });
-// // renderCountries(countries);
-// // function renderCountries(countries) {
-// //   return countryList.insertAdjacentHTML(
-// //     'beforeend',
-// //     countries
-// //       .map(country => {
-// //         return `<div><img src="${country.flags.svg}" alt="flag${country.name.common}" height="30"/><span>${country.name.common}</span></div>`;
-// //       })
-// //       .join(''),
-// //   );}
-
-//
-// function chooseMarkup(country) {}
-// countries.map(({ name }) => {
-//   if (countryInput === name.common) {
-//     const markupCountryList = countries
-//       .map(({ name, capital, flags, population, languages }) => {
-//         return `
-//         <li class="country-item">${name.official}</li>
-//         <li class=""><img src="${flags.svg}" alt="yoast seo" height="30"/></li>
-//         <li class="country-item">${capital}</li>
-//         <li class="country-item">${population}</li>
-//         <li class="country-item">${languages}</li>`;
-//       })
-//       .join('');
-//     countryList.insertAdjacentHTML('beforeend', markupCountryList);
-//     console.log(countryList);
-//   }
-// });
