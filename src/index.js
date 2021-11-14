@@ -1,4 +1,6 @@
 import './css/styles.css';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+var debounce = require('lodash.debounce');
 
 const DEBOUNCE_DELAY = 300;
 const BASE_URL = `https://restcountries.com/v3.1`;
@@ -13,11 +15,12 @@ function fetchCountry(countryInput) {
     if (response.ok) {
       return response.json();
     }
+    Notify.failure('Oops, there is no country with that name');
     throw Error(response.statusText);
   });
 }
 
-inputEl.addEventListener('input', onInputEl);
+inputEl.addEventListener('input', debounce(onInputEl, DEBOUNCE_DELAY));
 function onInputEl() {
   countryInfo.innerHTML = '';
   const countryInput = inputEl.value.trim();
@@ -39,7 +42,11 @@ function showProfile(countries) {
   if (countries.length === 1) {
     return chooseMarkup(countries[0]);
   }
-
+  if (countries.length > 10) {
+    return Notify.info('Too many matches found. Please enter a more specific name.', {
+      showOnlyTheLastOne: true,
+    });
+  }
   renderCountries(countries);
 }
 
@@ -99,102 +106,3 @@ function chooseMarkup({ name, capital, flags, population, languages }) {
 //     console.log(countryList);
 //   }
 // });
-// const markupCountryInfo = countries
-//   .map(country => {
-//     return `<div><img src="${flags.svg}" alt="flag${name.common}" height="30"/><span>${name.common}</span></div>`;
-//   })
-//   .join('');
-// countryInfo.insertAdjacentHTML('beforeend', markupCountryInfo);
-// console.log(countryInfo);
-
-//  const markupCountryInfo = countries
-//    .map(country => {
-//      return `<div><img src="${flags.svg}" alt="flag${name.common}" height="30"/><span>${name.common}</span></div>`;
-//    })
-//    .join('');
-//  countryInfo.insertAdjacentHTML('beforeend', markupCountryInfo);
-//  console.log(countryInfo);
-//  const markup = countries;
-
-// фиг знает что\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-// function chooseMarkup(country) {}
-// countries.map(({ name }) => {
-//   if (countryInput === name.common) {
-//     const markupCountryList = countries
-//       .map(({ name, capital, flags, population, languages }) => {
-//         return `
-//         <li class="country-item">${name.official}</li>
-//         <li class=""><img src="${flags.svg}" alt="yoast seo" height="30"/></li>
-//         <li class="country-item">${capital}</li>
-//         <li class="country-item">${population}</li>
-//         <li class="country-item">${languages}</li>`;
-//       })
-//       .join('');
-//     countryList.insertAdjacentHTML('beforeend', markupCountryList);
-//     console.log(countryList);
-//   }
-// });
-// const markupCountryInfo = countries
-//   .map(country => {
-//     return `<div><img src="${flags.svg}" alt="flag${name.common}" height="30"/><span>${name.common}</span></div>`;
-//   })
-//   .join('');
-// countryInfo.insertAdjacentHTML('beforeend', markupCountryInfo);
-// console.log(countryInfo);
-
-// const markupCountryInfo = countries
-//   .map(country => {
-//     return `<div><img src="${flags.svg}" alt="flag${name.common}" height="30"/><span>${name.common}</span></div>`;
-//   })
-//   .join('');
-// countryInfo.insertAdjacentHTML('beforeend', markupCountryInfo);
-// console.log(countryInfo);
-// const markup = countries;
-// запас
-// import './css/styles.css';
-
-// const DEBOUNCE_DELAY = 300;
-// const BASE_URL = `https://restcountries.com/v3.1`;
-// const inputEl = document.querySelector('#search-box');
-// const countryList = document.querySelector('.country-list');
-// const countryInfo = document.querySelector('.country-info');
-
-// inputEl.addEventListener('input', onInputEl);
-// function onInputEl() {
-//   const countryInput = inputEl.value.trim();
-//   console.log(countryInput);
-//   fetchCountry(countryInput).then(showProfile);
-//   if (countryInput === '') {
-//     console.log('очистить данные');
-//   }
-// }
-
-// function fetchCountry(countryInput) {
-//   return fetch(`${BASE_URL}/name/${countryInput}`).then(response => {
-//     if (response.ok) {
-//       return response.json();
-//     }
-//     throw Error('error 404');
-//   });
-// }
-
-// function showProfile(countries) {
-//   if (countries.length === 1) {
-//     chooseMarkup(countries[0]);
-//     console.log(countries);
-//   }
-//   const markup = countries.map(country => {
-//     console.log(country);
-//     countryInfo.innerHTML = `<div><img src="${country.flags.svg}" alt="flag${country.name.common}" height="30"/><span>${country.name.common}</span></div>`;
-//   });
-
-//   function chooseMarkup({ name, capital, flags, population, languages }) {
-//     countryList.innerHTML = `<li class="country-item">${name.official}</li>
-//             <li class=""><img src="${flags.svg}" alt="yoast seo" height="30"/></li>
-//             <li class="country-item">${capital}</li>
-//             <li class="country-item">${population}</li>
-//             <li class="country-item">${languages}</li>`;
-//   }
-
-//   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-// }
