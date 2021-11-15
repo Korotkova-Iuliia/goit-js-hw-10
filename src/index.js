@@ -5,16 +5,16 @@ var debounce = require('lodash.debounce');
 const DEBOUNCE_DELAY = 300;
 const BASE_URL = `https://restcountries.com/v3.1`;
 const inputEl = document.querySelector('#search-box');
-const countryList = document.querySelector('.country-list');
-const countryInfo = document.querySelector('.country-info');
+const countryNewInfo = document.querySelector('.country-info');
+const countryNEWList = document.querySelector('.country-list');
 
 inputEl.addEventListener('input', debounce(onInputEl, DEBOUNCE_DELAY));
 
-function infoReset() {
-  countryInfo.innerHTML = '';
+function listNEWReset() {
+  countryNEWList.innerHTML = '';
 }
-function ListReset() {
-  countryList.innerHTML = '';
+function infoNewReset() {
+  countryNewInfo.innerHTML = '';
 }
 function notifyFailure() {
   Notify.failure('Oops, there is no country with that name', {
@@ -42,47 +42,63 @@ function fetchCountry(countryInput) {
 }
 
 function onInputEl() {
-  infoReset();
+  listNEWReset();
   const countryInput = inputEl.value.trim();
   if (countryInput === '') {
-    infoReset();
-    ListReset();
+    listNEWReset();
+    infoNewReset();
   }
   fetchCountry(countryInput).then(showCountry);
 }
 
 function showCountry(countries) {
-  ListReset();
-  infoReset();
+  infoNewReset();
+  listNEWReset();
   renderCountriesInfo(countries);
 
   if (countries.length === 1) {
-    infoReset();
+    listNEWReset();
     return renderCountriesList(countries[0]);
   }
   if (countries.length > 10) {
-    infoReset();
+    listNEWReset();
     return notifyInfo();
   }
 }
 
 function renderCountriesInfo(countries) {
-  countryInfo.insertAdjacentHTML(
+  countryNEWList.insertAdjacentHTML(
     'beforeend',
-    countries
-      .map(country => {
-        return `<div class="searchRow"><img src="${country.flags.svg}" 
+    countries.map(country => {
+      console.log(country);
+      return `<li class="searchRow"><img src="${country.flags.svg}" 
         alt="flag${country.name.common}" height="20"/>
         <h1 class="zagolovok">${country.name.common}</h1>
-        </div>`;
-      })
-      .join(''),
+        </li>`;
+    }),
+
+    // .join(''),
   );
+  countryNEWList.sort(function (a, b) {
+    var nameA = a.name.common.toUpperCase(); // ignore upper and lowercase
+    var nameB = b.name.common.toUpperCase(); // ignore upper and lowercase
+    if (nameA < nameB) {
+      return -1;
+    }
+    if (nameA > nameB) {
+      return 1;
+    }
+    return 0;
+  });
+  console.log(countryNEWList);
+  // const sortByName = [...countryNEWList].sort((a, b) => {
+  //   return a - b;
+  // });
 }
 
 function renderCountriesList({ name, capital, flags, population, languages }) {
-  countryList.innerHTML = `
-  <div class="card">
+  countryNewInfo.innerHTML = `
+
   <div class="row">
   <img src="${flags.svg}"  alt="flag${name.common}" 
   height="30"/>
@@ -92,6 +108,5 @@ function renderCountriesList({ name, capital, flags, population, languages }) {
   <p class="text"><span class="description">Capital:</span> ${capital}</p>
   <p class="text"><span class="description">Population:</span> ${population}</p>
   <p class="text"><span class="description">Languages:</span> ${languages}</p>
-  </div>
-   </div>`;
+  </div>`;
 }
