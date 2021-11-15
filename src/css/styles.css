@@ -15,7 +15,21 @@ body {
   background-image: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)),
     url('../images/7830674_plane_trip_international_icon.svg');
 }
-
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+}
+ul,
+ol {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-left: 0px;
+}
 #search-box {
   font: inherit;
   padding: 8px;
@@ -23,4 +37,43 @@ body {
   margin-top: 30px;
   margin-bottom: 16px;
   margin-left: 30px;
+}
+.searchRow {
+  display: flex;
+  align-items: baseline;
+  margin-left: 30px;
+}
+.zagolovok {
+  font-size: 20px;
+  margin-left: 0 7px;
+}
+.card {
+  margin-left: 30px;
+}
+.row {
+  display: flex;
+  align-items: baseline;
+}
+.rowZagolovok {
+  display: block;
+  font-size: 50px;
+  margin: 0 15px;
+}
+.country-list {
+  padding: 0;
+}
+.country-list {
+  padding: 0;
+}
+.text {
+  display: block;
+
+  font-size: 20px;
+}
+.description {
+  font-weight: 700;
+}
+.text-block {
+  display: flex;
+  flex-direction: column;
 }

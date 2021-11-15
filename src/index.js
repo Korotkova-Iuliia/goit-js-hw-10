@@ -53,12 +53,15 @@ function onInputEl() {
 
 function showCountry(countries) {
   ListReset();
+  infoReset();
   renderCountriesInfo(countries);
+
   if (countries.length === 1) {
     infoReset();
     return renderCountriesList(countries[0]);
   }
   if (countries.length > 10) {
+    infoReset();
     return notifyInfo();
   }
 }
@@ -68,17 +71,27 @@ function renderCountriesInfo(countries) {
     'beforeend',
     countries
       .map(country => {
-        return `<div><img src="${country.flags.svg}" alt="flag${country.name.common}" height="30"/><span>${country.name.common}</span></div>`;
+        return `<div class="searchRow"><img src="${country.flags.svg}" 
+        alt="flag${country.name.common}" height="20"/>
+        <h1 class="zagolovok">${country.name.common}</h1>
+        </div>`;
       })
       .join(''),
   );
 }
 
 function renderCountriesList({ name, capital, flags, population, languages }) {
-  countryList.innerHTML = ` 
-  <img src="${flags.svg}" alt="yoast seo" height="30"/>
-  <h1 class="country-item">${name.official}</h1>
-  <p class="country-item">${capital}</p>
-  <p class="country-item">${population}</p>
-  <p class="country-item">${languages}</p>`;
+  countryList.innerHTML = `
+  <div class="card">
+  <div class="row">
+  <img src="${flags.svg}"  alt="flag${name.common}" 
+  height="30"/>
+  <h1 class="rowZagolovok">${name.common}</h1>
+  </div>
+  <div class="text-block">
+  <p class="text"><span class="description">Capital:</span> ${capital}</p>
+  <p class="text"><span class="description">Population:</span> ${population}</p>
+  <p class="text"><span class="description">Languages:</span> ${languages}</p>
+  </div>
+   </div>`;
 }
