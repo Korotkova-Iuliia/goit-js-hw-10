@@ -11,19 +11,15 @@ const countryList = document.querySelector('.country-list');
 
 inputEl.addEventListener('input', debounce(onInputEl, DEBOUNCE_DELAY));
 
-function fetchCountry(countries) {
-  return fetch(`${BASE_URL}/name/${countries}?fields=name,capital,population,flags,languages`).then(
-    response => {
-      if (response.ok) {
-        return response.json();
-      }
-      notifyFailure();
-      if (countries !== '') {
-        notifyFailure();
-      }
-      throw new Error(response.statusText);
-    },
-  );
+function fetchCountry(countryInput) {
+  return fetch(
+    `${BASE_URL}/name/${countryInput}?fields=name,capital,population,flags,languages`,
+  ).then(response => {
+    if (response.ok) {
+      return response.json();
+    }
+    throw new Error(response.statusText);
+  });
 }
 function onInputEl() {
   listReset();
@@ -39,16 +35,19 @@ fetchCountry();
 function showCountry(countries) {
   infoReset();
   listReset();
-  renderCountriesInfo(countries);
 
   if (countries.length === 1) {
     listReset();
     return renderCountriesList(countries[0]);
   }
+  if (countries.length === 0) {
+    return notifyFailure();
+  }
   if (countries.length > 10) {
     listReset();
     return notifyInfo();
   }
+  renderCountriesInfo(countries);
 }
 
 function renderCountriesInfo(countries) {
