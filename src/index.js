@@ -1,4 +1,4 @@
-// не могу отловить ошибку на строке 23\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+// //вариант 1: не могу отловить ошибку на строке 23\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 import './css/styles.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 var debounce = require('lodash.debounce');
@@ -11,19 +11,19 @@ const countryList = document.querySelector('.country-list');
 
 inputEl.addEventListener('input', debounce(onInputEl, DEBOUNCE_DELAY));
 
-function fetchCountry(countryInput) {
-  return fetch(
-    `${BASE_URL}/name/${countryInput}?fields=name,capital,population,flags,languages`,
-  ).then(response => {
-    if (response.ok) {
-      return response.json();
-    }
-    notifyFailure();
-    if (countryInput !== '') {
+function fetchCountry(countries) {
+  return fetch(`${BASE_URL}/name/${countries}?fields=name,capital,population,flags,languages`).then(
+    response => {
+      if (response.ok) {
+        return response.json();
+      }
       notifyFailure();
-    }
-    throw Error(response.statusText);
-  });
+      if (countries !== '') {
+        notifyFailure();
+      }
+      throw Error(response.statusText);
+    },
+  );
 }
 
 function onInputEl() {
@@ -104,7 +104,7 @@ function notifyInfo() {
   });
 }
 
-// использование версии v3.1: нет сортировки ||||||||||||||||||||||||||||||||||||||||||||||||
+// // вариант 2: использование версии v3.1: нет сортировки ||||||||||||||||||||||||||||||||||||||||||||||||
 // import './css/styles.css';
 // import { Notify } from 'notiflix/build/notiflix-notify-aio';
 // var debounce = require('lodash.debounce');
@@ -117,22 +117,6 @@ function notifyInfo() {
 
 // inputEl.addEventListener('input', debounce(onInputEl, DEBOUNCE_DELAY));
 
-// function infoReset() {
-//   countryInfo.innerHTML = '';
-// }
-// function ListReset() {
-//   countryList.innerHTML = '';
-// }
-// function notifyFailure() {
-//   Notify.failure('Oops, there is no country with that name', {
-//     showOnlyTheLastOne: true,
-//   });
-// }
-// function notifyInfo() {
-//   Notify.info('Too many matches found. Please enter a more specific name.', {
-//     showOnlyTheLastOne: true,
-//   });
-// }
 // function fetchCountry(countryInput) {
 //   return fetch(
 //     `${BASE_URL}/name/${countryInput}?fields=name,capital,population,flags,languages`,
@@ -202,4 +186,21 @@ function notifyInfo() {
 //   </div>
 //    </div>`;
 //   console.log(languages.valueOf());
+// }
+
+// function infoReset() {
+//   countryInfo.innerHTML = '';
+// }
+// function ListReset() {
+//   countryList.innerHTML = '';
+// }
+// function notifyFailure() {
+//   Notify.failure('Oops, there is no country with that name', {
+//     showOnlyTheLastOne: true,
+//   });
+// }
+// function notifyInfo() {
+//   Notify.info('Too many matches found. Please enter a more specific name.', {
+//     showOnlyTheLastOne: true,
+//   });
 // }
