@@ -1,3 +1,4 @@
+// не могу отловить ошибку на строке 23\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 import './css/styles.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 var debounce = require('lodash.debounce');
@@ -10,22 +11,6 @@ const countryList = document.querySelector('.country-list');
 
 inputEl.addEventListener('input', debounce(onInputEl, DEBOUNCE_DELAY));
 
-function listReset() {
-  countryList.innerHTML = '';
-}
-function infoReset() {
-  countryInfo.innerHTML = '';
-}
-function notifyFailure() {
-  Notify.failure('Oops, there is no country with that name', {
-    showOnlyTheLastOne: true,
-  });
-}
-function notifyInfo() {
-  Notify.info('Too many matches found. Please enter a more specific name.', {
-    showOnlyTheLastOne: true,
-  });
-}
 function fetchCountry(countryInput) {
   return fetch(
     `${BASE_URL}/name/${countryInput}?fields=name,capital,population,flags,languages`,
@@ -33,6 +18,7 @@ function fetchCountry(countryInput) {
     if (response.ok) {
       return response.json();
     }
+    notifyFailure();
     if (countryInput !== '') {
       notifyFailure();
     }
@@ -97,6 +83,25 @@ function renderCountriesList({ name, capital, flags, population, languages }) {
   <p class="text"><span class="description">Languages:</span> ${lang}</p>
   </div>
    </div>`;
+}
+function listReset() {
+  countryList.innerHTML = '';
+}
+
+function infoReset() {
+  countryInfo.innerHTML = '';
+}
+
+function notifyFailure() {
+  Notify.failure('Oops, there is no country with that name', {
+    showOnlyTheLastOne: true,
+  });
+}
+
+function notifyInfo() {
+  Notify.info('Too many matches found. Please enter a more specific name.', {
+    showOnlyTheLastOne: true,
+  });
 }
 
 // использование версии v3.1: нет сортировки ||||||||||||||||||||||||||||||||||||||||||||||||
