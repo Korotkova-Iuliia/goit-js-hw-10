@@ -3,18 +3,18 @@ import { Notify } from 'notiflix/build/notiflix-notify-aio';
 var debounce = require('lodash.debounce');
 
 const DEBOUNCE_DELAY = 300;
-const BASE_URL = `https://restcountries.com/v3.1`;
+const BASE_URL = `https://restcountries.com/v2`;
 const inputEl = document.querySelector('#search-box');
-const countryList = document.querySelector('.country-list');
 const countryInfo = document.querySelector('.country-info');
+const countryList = document.querySelector('.country-list');
 
 inputEl.addEventListener('input', debounce(onInputEl, DEBOUNCE_DELAY));
 
+function listReset() {
+  countryList.innerHTML = '';
+}
 function infoReset() {
   countryInfo.innerHTML = '';
-}
-function ListReset() {
-  countryList.innerHTML = '';
 }
 function notifyFailure() {
   Notify.failure('Oops, there is no country with that name', {
@@ -36,83 +36,87 @@ function fetchCountry(countryInput) {
     if (countryInput !== '') {
       notifyFailure();
     }
-
     throw Error(response.statusText);
   });
 }
 
 function onInputEl() {
-  infoReset();
+  listReset();
   const countryInput = inputEl.value.trim();
   if (countryInput === '') {
+    listReset();
     infoReset();
-    ListReset();
   }
   fetchCountry(countryInput).then(showCountry);
 }
 
 function showCountry(countries) {
-  ListReset();
   infoReset();
+  listReset();
   renderCountriesInfo(countries);
 
   if (countries.length === 1) {
-    infoReset();
+    listReset();
     return renderCountriesList(countries[0]);
   }
   if (countries.length > 10) {
-    infoReset();
+    listReset();
     return notifyInfo();
   }
 }
 
 function renderCountriesInfo(countries) {
-  countryInfo.insertAdjacentHTML(
+  countryList.insertAdjacentHTML(
     'beforeend',
     countries
-      .map(country => {
-        return `<div class="searchRow"><img src="${country.flags.svg}" 
-        alt="flag${country.name.common}" height="20"/>
-        <h1 class="zagolovok">${country.name.common}</h1>
-        </div>`;
+      .sort((firstName, secondName) => {
+        firstName.name.localeCompare(secondName.name);
+      })
+      .map(({ name, flags }) => {
+        return `<li class="searchRow"><img src="${flags.svg}"
+        alt="flag${name}" height="20"/>
+        <h1 class="zagolovok">${name}</h1>
+        </li>`;
       })
       .join(''),
   );
 }
 
 function renderCountriesList({ name, capital, flags, population, languages }) {
+  const lang = languages.map(language => language.name);
   countryList.innerHTML = `
   <div class="card">
   <div class="row">
-  <img src="${flags.svg}"  alt="flag${name.common}" 
+  <img src="${flags.svg}"  alt="flag${name}"
   height="30"/>
-  <h1 class="rowZagolovok">${name.common}</h1>
+  <h1 class="rowZagolovok">${name}</h1>
   </div>
   <div class="text-block">
   <p class="text"><span class="description">Capital:</span> ${capital}</p>
   <p class="text"><span class="description">Population:</span> ${population}</p>
-  <p class="text"><span class="description">Languages:</span> ${languages}</p>
+  <p class="text"><span class="description">Languages:</span> ${lang}</p>
   </div>
    </div>`;
 }
 
+// использование версии v3.1: нет сортировки ||||||||||||||||||||||||||||||||||||||||||||||||
 // import './css/styles.css';
 // import { Notify } from 'notiflix/build/notiflix-notify-aio';
 // var debounce = require('lodash.debounce');
 
 // const DEBOUNCE_DELAY = 300;
-// const BASE_URL = `https://restcountries.com/v2`;
+// const BASE_URL = `https://restcountries.com/v3.1`;
 // const inputEl = document.querySelector('#search-box');
-// const countryInfo = document.querySelector('.country-info');
 // const countryList = document.querySelector('.country-list');
+// const countryInfo = document.querySelector('.country-info');
 
 // inputEl.addEventListener('input', debounce(onInputEl, DEBOUNCE_DELAY));
 
-// function listReset() {
-//   countryList.innerHTML = '';
-// }
 // function infoReset() {
 //   countryInfo.innerHTML = '';
+// }
+// function ListReset() {
+//   countryList.innerHTML = '';
 // }
 // function notifyFailure() {
 //   Notify.failure('Oops, there is no country with that name', {
@@ -140,75 +144,57 @@ function renderCountriesList({ name, capital, flags, population, languages }) {
 // }
 
 // function onInputEl() {
-//   listReset();
+//   infoReset();
 //   const countryInput = inputEl.value.trim();
 //   if (countryInput === '') {
-//     listReset();
 //     infoReset();
+//     ListReset();
 //   }
 //   fetchCountry(countryInput).then(showCountry);
 // }
 
 // function showCountry(countries) {
+//   ListReset();
 //   infoReset();
-//   listReset();
 //   renderCountriesInfo(countries);
 
 //   if (countries.length === 1) {
-//     listReset();
+//     infoReset();
 //     return renderCountriesList(countries[0]);
 //   }
 //   if (countries.length > 10) {
-//     listReset();
+//     infoReset();
 //     return notifyInfo();
 //   }
 // }
 
 // function renderCountriesInfo(countries) {
-//   countryList.insertAdjacentHTML(
+//   countryInfo.insertAdjacentHTML(
 //     'beforeend',
 //     countries
-//       .sort((firstName, secondName) => {
-//         firstName.name.localeCompare(secondName.name);
-//       })
-//       .map(({ name, flags }) => {
-//         return `<li class="searchRow"><img src="${flags.svg}"
-//         alt="flag${name}" height="20"/>
-//         <h1 class="zagolovok">${name}</h1>
-//         </li>`;
+//       .map(country => {
+//         return `<div class="searchRow"><img src="${country.flags.svg}"
+//         alt="flag${country.name.common}" height="20"/>
+//         <h1 class="zagolovok">${country.name.common}</h1>
+//         </div>`;
 //       })
 //       .join(''),
 //   );
 // }
 
-// // function renderCountriesList({ name, capital, flags, population, languages }) {
-// //   countryList.innerHTML = `
-// //   <div class="card">
-// //   <div class="row">
-// //   <img src="${flags.svg}"  alt="flag${name.common}"
-// //   height="30"/>
-// //   <h1 class="rowZagolovok">${name.common}</h1>
-// //   </div>
-// //   <div class="text-block">
-// //   <p class="text"><span class="description">Capital:</span> ${capital}</p>
-// //   <p class="text"><span class="description">Population:</span> ${population}</p>
-// //   <p class="text"><span class="description">Languages:</span> ${languages}</p>
-// //   </div>
-// //    </div>`;
-// // }
-
-// function renderCountriesList(countries) {
-//   countries.map(({ name, capital, flags, population, languages }) => {
-//     countryInfo.innerHTML = `
+// function renderCountriesList({ name, capital, flags, population, languages }) {
+//   countryList.innerHTML = `
+//   <div class="card">
 //   <div class="row">
-//   <img src="${flags.svg}"  alt="flag${name}"
+//   <img src="${flags.svg}"  alt="flag${name.common}"
 //   height="30"/>
-//   <h1 class="rowZagolovok">${name}</h1>
+//   <h1 class="rowZagolovok">${name.common}</h1>
 //   </div>
 //   <div class="text-block">
 //   <p class="text"><span class="description">Capital:</span> ${capital}</p>
 //   <p class="text"><span class="description">Population:</span> ${population}</p>
-//   <p class="text"><span class="description">Languages:</span> ${[languages]}</p>
-//   </div>`;
-//   });
+//   <p class="text"><span class="description">Languages:</span> ${lang}</p>
+//   </div>
+//    </div>`;
+//   console.log(languages.valueOf());
 // }
