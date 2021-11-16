@@ -25,7 +25,6 @@ function fetchCountry(countries) {
     },
   );
 }
-
 function onInputEl() {
   listReset();
   const countryInput = inputEl.value.trim();
