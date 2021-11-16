@@ -34,6 +34,7 @@ function onInputEl() {
   }
   fetchCountry(countryInput).then(showCountry);
 }
+fetchCountry();
 
 function showCountry(countries) {
   infoReset();
