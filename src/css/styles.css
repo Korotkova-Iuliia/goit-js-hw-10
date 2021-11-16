@@ -70,6 +70,7 @@ ol {
 }
 .country-list {
   padding: 0;
+  list-style: none;
 }
 .country-list {
   padding: 0;
@@ -85,4 +86,7 @@ ol {
 .text-block {
   display: flex;
   flex-direction: column;
+}
+.card {
+  margin-left: 30px;
 }
