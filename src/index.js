@@ -21,7 +21,7 @@ function fetchCountry(countries) {
       if (countries !== '') {
         notifyFailure();
       }
-      throw Error(response.statusText);
+      throw new Error(response.statusText);
     },
   );
 }
